@@ -1,0 +1,50 @@
+# --- Visual Studio ---
+# Pliki użytkownika i tymczasowe dane sesji
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+out/
+build/
+
+# Pliki kompilacji i bazy danych IntelliSense
+*.VC.db
+*.VC.opendb
+*.sdf
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Pliki tymczasowe kompilatora
+*.obj
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.ilk
+*.bsc
+*.exp
+*.res
+*.pch
+*.ipch
+
+# Pliki binarne (wykonywalne)
+*.exe
+*.dll
+*.lib
+*.so
+*.a
+
+# --- vcpkg (jeśli będziesz używać menedżera pakietów) ---
+vcpkg_installed/
+
+# --- Systemowe ---
+.DS_Store
+Thumbs.db
+
+# --- Logi ---
+*.log
