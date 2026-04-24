@@ -123,7 +123,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GraphDatabase.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="NodeType.cpp" />
+    <ClCompile Include="Pair.cpp" />
+    <ClCompile Include="PropertyType.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="NodeType.h" />
+    <ClInclude Include="Pair.h" />
+    <ClInclude Include="PropertyType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
