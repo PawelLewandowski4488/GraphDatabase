@@ -123,6 +123,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataBase.cpp" />
+    <ClCompile Include="Edge.cpp" />
+    <ClCompile Include="EdgeType.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="NodeType.cpp" />
@@ -130,6 +133,9 @@
     <ClCompile Include="PropertyType.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataBase.h" />
+    <ClInclude Include="Edge.h" />
+    <ClInclude Include="EdgeType.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="NodeType.h" />

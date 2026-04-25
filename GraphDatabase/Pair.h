@@ -1,12 +1,15 @@
 #pragma once
 #include <string>
 #include <type_traits>
+#include "PropertyType.h"
 
 class PairBase
 {
 public:
 	virtual std::string ToString() const = 0;
 	virtual ~PairBase() = default;
+
+	static PairBase* CreatePair(const PropertyType& propertytype, const std::string& rawvalue);
 };
 
 template <typename T> class Pair : public PairBase
