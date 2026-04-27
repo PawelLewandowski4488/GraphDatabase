@@ -8,15 +8,27 @@
 
 class DataBase
 {
-	std::string label;
-	std::map<int, std::unique_ptr<NodeType>> nodetypes;
-	std::map<int, std::unique_ptr<Node>> nodes;
-	std::map<int, std::unique_ptr<EdgeType>> edgetypes;
-	std::map<int, std::unique_ptr<Edge>> edges;
-
 public:
-	DataBase(std::string label) : label(label) {}
+	std::string name;
+	std::map<std::string, std::unique_ptr<NodeType>> nodetypes;
+	std::map<std::string, std::unique_ptr<Node>> nodes;
+	std::map<std::string, std::unique_ptr<EdgeType>> edgetypes;
+	std::map<std::string, std::unique_ptr<Edge>> edges;
+
+	DataBase(std::string name) : name(name) {}
+
+	void AddNodeType(std::unique_ptr<NodeType> nodetype);
+	void AddNode(std::unique_ptr<Node> node);
+	void AddEdgeType(std::unique_ptr<EdgeType> edgetype);
+	void AddEdge(std::unique_ptr<Edge> edge);
+
+	std::unique_ptr<NodeType> FindNodeType(std::string label);
+	std::unique_ptr<Node> FindNode(std::string label);
+	std::unique_ptr<EdgeType> FindEdgeType(std::string label);
+	std::unique_ptr<Edge> FindEdge(std::string label); // todo
+
 	void Load(); // to do
 	void Save(); // to do
+	std::string GetName();
 };
 

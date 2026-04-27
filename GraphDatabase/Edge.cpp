@@ -34,3 +34,8 @@ std::string Edge::ToString()
 	for (PairBase* p : nreq) text += p->ToString() + "\n";
 	return text;
 }
+
+const std::string& Edge::GetLabel()
+{
+	return label;
+}

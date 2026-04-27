@@ -4,9 +4,9 @@ PairBase* PairBase::CreatePair(const PropertyType& propertytype, const std::stri
 {
 	switch (propertytype.type)
 	{
-	case Type::INT: return new Pair<int>(propertytype.name, std::stoi(rawvalue));
-	case Type::FLOAT: return new Pair<float>(propertytype.name, std::stof(rawvalue));
-	case Type::STRING: return new Pair<std::string>(propertytype.name, rawvalue);
+	case TYPE::INT: return new Pair<int>(propertytype.name, std::stoi(rawvalue));
+	case TYPE::FLOAT: return new Pair<float>(propertytype.name, std::stof(rawvalue));
+	case TYPE::STRING: return new Pair<std::string>(propertytype.name, rawvalue);
 	}
 	return nullptr;
 }

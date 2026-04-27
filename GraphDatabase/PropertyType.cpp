@@ -5,9 +5,9 @@ std::string PropertyType::ToString()
     std::string text;
 
     switch (type) {
-    case Type::INT:    text = "INT";    break;
-    case Type::FLOAT:  text = "FLOAT";  break;
-    case Type::STRING: text = "STRING"; break;
+    case TYPE::INT:    text = "INT";    break;
+    case TYPE::FLOAT:  text = "FLOAT";  break;
+    case TYPE::STRING: text = "STRING"; break;
     default:           text = "UNKNOWN"; break;
     }
 

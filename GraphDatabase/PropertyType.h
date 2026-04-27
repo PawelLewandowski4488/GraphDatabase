@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
 #include "Header.h"
+#include "Type.h"
 
 class PropertyType
 {
 public:
-	Type type;
+	TYPE type;
 	std::string name;
-	PropertyType(Type type, std::string name) : type(type), name(name) {}
+	PropertyType(TYPE type, std::string name) : type(type), name(name) {}
 	std::string ToString();
 };
 

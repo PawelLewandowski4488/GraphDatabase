@@ -14,7 +14,7 @@ public:
 	std::vector<PropertyType> nreq;
 
 	std::vector<Node*> nodes;
-	NodeType(std::string name, std::initializer_list<PropertyType> req, std::initializer_list<PropertyType> nreq) : name(name), req(req), nreq(nreq) {}
+	NodeType(std::string name, std::vector<PropertyType> req, std::vector<PropertyType> nreq) : name(name), req(req), nreq(nreq) {}
 	void AddNode(Node* node);
 	std::string ToString();
 };

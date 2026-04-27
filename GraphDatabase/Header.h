@@ -7,4 +7,5 @@
 #include <sstream>
 #include <iostream>
 
-enum class Type { INT, FLOAT, STRING };
+enum class ACTION { CREATE, DELETE, CHANGE, USE, UNKNOWN };
+enum class ENTITY { DATABASE, NODE, NODETYPE, EDGE, EDGETYPE, UNKNOWN };

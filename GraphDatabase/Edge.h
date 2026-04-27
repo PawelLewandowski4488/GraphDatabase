@@ -27,5 +27,6 @@ public:
 	Edge(const Edge&) = delete;
 	Edge& operator=(const Edge&) = delete;
 	std::string ToString();
+	const std::string& GetLabel();
 };
 
