@@ -16,17 +16,16 @@ class Edge
 {
 	EdgeType* edgetype;
 	long int id;
-	std::string label;
 	Node* from;
 	Node* to;
 	std::vector<PairBase*> req;
 	std::vector<PairBase*> nreq;
 public:
-	Edge(EdgeType* edgetype, long int id, std::string label, Node* from, Node* to, std::map<std::string, std::string>data);
+	Edge(EdgeType* edgetype, long int id, Node* from, Node* to, std::vector<std::pair<std::string, std::string>> req, std::vector<std::pair<std::string, std::string>> nreq);
 	~Edge();
 	Edge(const Edge&) = delete;
 	Edge& operator=(const Edge&) = delete;
 	std::string ToString();
-	const std::string& GetLabel();
+	std::string GetKey();
 };
 

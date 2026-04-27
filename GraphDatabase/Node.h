@@ -17,7 +17,7 @@ class Node
 	std::vector<PairBase*> req;
 	std::vector<PairBase*> nreq;
 public:
-	Node(NodeType* nodetype, long int id, std::string label, std::map<std::string, std::string>data);
+	Node(NodeType* nodetype, long int id, std::string label, std::vector<std::pair<std::string, std::string>> req, std::vector<std::pair<std::string, std::string>> nreq);
 	~Node();
 	Node(const Node&) = delete;
 	Node& operator=(const Node&) = delete;

@@ -22,6 +22,11 @@ public:
 	void AddEdgeType(std::unique_ptr<EdgeType> edgetype);
 	void AddEdge(std::unique_ptr<Edge> edge);
 
+	void RemoveNodeType(std::string name);
+	void RemoveNode(std::string name);
+	void RemoveEdgeType(std::string name);
+	void RemoveEdge(std::string name);
+
 	std::unique_ptr<NodeType> FindNodeType(std::string label);
 	std::unique_ptr<Node> FindNode(std::string label);
 	std::unique_ptr<EdgeType> FindEdgeType(std::string label);

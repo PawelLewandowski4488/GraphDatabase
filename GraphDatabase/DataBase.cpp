@@ -16,7 +16,7 @@ void DataBase::AddEdgeType(std::unique_ptr <EdgeType> edgetype)
 }
 void DataBase::AddEdge(std::unique_ptr <Edge> edge)
 {
-	edges.emplace(edge->GetLabel(), std::move(edge));
+	edges.emplace(edge->GetKey(), std::move(edge));
 }
 
 std::string DataBase::GetName()

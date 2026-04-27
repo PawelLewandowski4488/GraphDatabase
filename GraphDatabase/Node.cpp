@@ -6,18 +6,39 @@
 #include "NodeType.h"
 
 
-Node::Node(NodeType* nodetype, long int id, std::string label, std::map<std::string, std::string>data) : nodetype(nodetype), id(id), label(label)
+Node::Node(NodeType* nodetype, long int id, std::string label, std::vector<std::pair<std::string, std::string>> raw_req, std::vector<std::pair<std::string, std::string>> raw_nreq) : nodetype(nodetype), id(id), label(label)
 {
-	for (const auto& propertytype : nodetype->req)
-	{
-		if (data.count(propertytype.name)) req.push_back(PairBase::CreatePair(propertytype, data.at(propertytype.name)));
-		else throw std::runtime_error("Missing required field: " + propertytype.name);
-	}
-	for (const auto& propertytype : nodetype->nreq)
-	{
-		if (data.count(propertytype.name)) nreq.push_back(PairBase::CreatePair(propertytype, data.at(propertytype.name)));
-	}
-	nodetype->AddNode(this);
+    for (const auto& schemaProp : nodetype->req)
+    {
+        bool found = false;
+        for (const auto& input : raw_req)
+        {
+            if (input.first == schemaProp.name)
+            {
+                req.push_back(PairBase::CreatePair(schemaProp, input.second));
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw std::runtime_error("Error: Required field '" + schemaProp.name + "' not found in {} block.");
+        }
+    }
+
+    for (const auto& input : raw_nreq)
+    {
+        for (const auto& schemaProp : nodetype->nreq)
+        {
+            if (input.first == schemaProp.name)
+            {
+                nreq.push_back(PairBase::CreatePair(schemaProp, input.second));
+                break;
+            }
+        }
+    }
+
+    nodetype->AddNode(this);
 }
 
 Node::~Node()

@@ -4,17 +4,38 @@
 #include "Pair.h"
 #include "EdgeType.h"
 
-Edge::Edge(EdgeType* edgetype, long int id, std::string label, Node* from, Node* to, std::map<std::string, std::string>data) : edgetype(edgetype), id(id), label(label), from(from), to(to)
+Edge::Edge(EdgeType* edgetype, long int id, Node* from, Node* to, std::vector<std::pair<std::string, std::string>> raw_req, std::vector<std::pair<std::string, std::string>> raw_nreq) : edgetype(edgetype), id(id), from(from), to(to)
 {
-	for (const auto& propertytype : edgetype->req)
-	{
-		if (data.count(propertytype.name)) req.push_back(PairBase::CreatePair(propertytype, data.at(propertytype.name)));
-		else throw std::runtime_error("Missing required field: " + propertytype.name);
-	}
-	for (const auto& propertytype : edgetype->nreq)
-	{
-		if (data.count(propertytype.name)) nreq.push_back(PairBase::CreatePair(propertytype, data.at(propertytype.name)));
-	}
+    for (const auto& schemaProp : edgetype->req)
+    {
+        bool found = false;
+        for (const auto& input : raw_req)
+        {
+            if (input.first == schemaProp.name)
+            {
+                req.push_back(PairBase::CreatePair(schemaProp, input.second));
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw std::runtime_error("Error: Required field '" + schemaProp.name + "' not found in {} block.");
+        }
+    }
+
+    for (const auto& input : raw_nreq)
+    {
+        for (const auto& schemaProp : edgetype->nreq)
+        {
+            if (input.first == schemaProp.name)
+            {
+                nreq.push_back(PairBase::CreatePair(schemaProp, input.second));
+                break;
+            }
+        }
+    }
+
 	edgetype->AddEdge(this);
 }
 
@@ -27,7 +48,8 @@ Edge::~Edge()
 std::string Edge::ToString()
 {
 	std::string text = "--EDGE--\n";
-	text += std::to_string(id) + " " + label + "\n";
+	text += std::to_string(id) + "\n";
+    text += GetKey() + "\n";
 	text += "from: " + from->GetLabel() + "\n";
 	text += "to: " + to->GetLabel() + "\n";
 	for (PairBase* p : req) text += p->ToString() + "\n";
@@ -35,7 +57,8 @@ std::string Edge::ToString()
 	return text;
 }
 
-const std::string& Edge::GetLabel()
+std::string Edge::GetKey()
 {
-	return label;
+    return edgetype->name + "_" + from->GetLabel() + "_" + to->GetLabel();
 }
+
