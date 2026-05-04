@@ -1,5 +1,8 @@
 #include "EdgeType.h"
 
+#include "PropertyType.h"
+#include "NodeType.h"
+
 void EdgeType::AddEdge(Edge* edge)
 {
 	edges.push_back(edge);

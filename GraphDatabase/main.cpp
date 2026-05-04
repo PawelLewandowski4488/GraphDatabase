@@ -1,12 +1,7 @@
-#include "Header.h"
-#include "Node.h"
-#include "NodeType.h"
-#include "Edge.h"
-#include "EdgeType.h"
-#include "Pair.h"
-#include "PropertyType.h"
 #include "DataBase.h"
 #include "Kernel.h"
+
+#include <iostream>
 
 
 int main()

@@ -1,7 +1,9 @@
 #pragma once
+
+#include <string>
+#include <vector>
+
 #include "Header.h"
-#include "Type.h"
-#include <regex>
 
 struct ParsedCommand
 {

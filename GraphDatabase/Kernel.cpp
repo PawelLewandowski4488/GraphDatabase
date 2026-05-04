@@ -1,5 +1,14 @@
 #include "Kernel.h"
+
 #include "Command.h"
+#include "PropertyType.h"
+#include "NodeType.h"
+#include "Node.h"
+#include "EdgeType.h"
+#include "Edge.h"
+#include "DataBase.h"
+
+#include <iostream>
 
 std::string Kernel::GetCurrentDB()
 {

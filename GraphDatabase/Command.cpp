@@ -1,5 +1,11 @@
 #include "Command.h"
 
+#include "Type.h"
+
+#include <regex>
+#include <iostream>
+#include <sstream>
+
 ACTION Command::StringToACTION(const std::string& str) 
 {
 	if (str == "create") return ACTION::CREATE;

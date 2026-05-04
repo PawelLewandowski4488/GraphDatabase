@@ -1,5 +1,7 @@
 #include "NodeType.h"
 
+#include "PropertyType.h"
+
 void NodeType::AddNode(Node* node)
 {
 	nodes.push_back(node);

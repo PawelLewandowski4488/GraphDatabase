@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "Header.h"
 #include "Type.h"
+
 
 class PropertyType
 {

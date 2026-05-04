@@ -1,15 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <initializer_list>
 #include <map>
-#include "Pair.h"
-#include "Node.h"
 
+
+class PairBase;
 class PropertyType;
-
 class EdgeType;
-
 class Node;
 
 class Edge

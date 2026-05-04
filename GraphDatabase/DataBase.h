@@ -1,10 +1,13 @@
 #pragma once
-#include "header.h"
+
+#include <string>
+#include <map>
+#include <memory>
+
 #include "NodeType.h"
 #include "Node.h"
 #include "EdgeType.h"
 #include "Edge.h"
-
 
 class DataBase
 {
@@ -16,6 +19,13 @@ public:
 	std::map<std::string, std::unique_ptr<Edge>> edges;
 
 	DataBase(std::string name) : name(name) {}
+	~DataBase();
+
+	DataBase(const DataBase&) = delete;
+	DataBase& operator=(const DataBase&) = delete;
+
+	DataBase(DataBase&&) noexcept = default;
+	DataBase& operator=(DataBase&&) noexcept = default;
 
 	void AddNodeType(std::unique_ptr<NodeType> nodetype);
 	void AddNode(std::unique_ptr<Node> node);

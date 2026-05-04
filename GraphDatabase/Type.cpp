@@ -1,5 +1,7 @@
 #include "Type.h"
 
+#include <string>
+
 TYPE TypeMapper::StringToType(const std::string& str)
 {
     if (str == "int")    return TYPE::INT;
@@ -15,6 +17,6 @@ std::string TypeMapper::TypeToString(const TYPE& type)
     case TYPE::INT:    return "int";
     case TYPE::FLOAT:  return "float";
     case TYPE::STRING: return "string";
-    case TYPE::UNKNOWN: return "unknown";
+    default: return "unknown";
     }
 }

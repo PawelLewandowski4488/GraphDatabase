@@ -1,8 +1,10 @@
-#include <string>
-#include <initializer_list>
-#include <stdexcept>
-#include "Pair.h"
 #include "Node.h"
+
+#include <string>
+#include <stdexcept>
+
+#include "Pair.h"
+#include "PropertyType.h"
 #include "NodeType.h"
 
 

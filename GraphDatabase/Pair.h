@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include <type_traits>
-#include "PropertyType.h"
+
+class PropertyType;
 
 class PairBase
 {

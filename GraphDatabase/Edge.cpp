@@ -1,8 +1,11 @@
 #include "Edge.h"
-#include <initializer_list>
+
 #include <stdexcept>
+
+#include "Node.h"
 #include "Pair.h"
 #include "EdgeType.h"
+#include "PropertyType.h"
 
 Edge::Edge(EdgeType* edgetype, long int id, Node* from, Node* to, std::vector<std::pair<std::string, std::string>> raw_req, std::vector<std::pair<std::string, std::string>> raw_nreq) : edgetype(edgetype), id(id), from(from), to(to)
 {

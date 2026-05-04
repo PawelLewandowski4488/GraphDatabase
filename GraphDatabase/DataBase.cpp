@@ -1,5 +1,12 @@
 #include "DataBase.h"
 
+#include "NodeType.h"
+#include "Node.h"
+#include "EdgeType.h"
+#include "Edge.h"
+
+DataBase::~DataBase() = default;
+
 void DataBase::AddNodeType(std::unique_ptr<NodeType> nodetype)
 {
 	nodetypes.emplace(nodetype->name, std::move(nodetype));

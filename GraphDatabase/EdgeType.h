@@ -1,14 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <initializer_list>
+
+
 #include "PropertyType.h"
-#include "NodeType.h"
 
 class Edge;
-
 class Node;
-
 class NodeType;
 
 class EdgeType

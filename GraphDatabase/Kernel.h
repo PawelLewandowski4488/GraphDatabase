@@ -1,6 +1,9 @@
 #pragma once
-#include "header.h"
-#include "DataBase.h"
+
+#include <map>
+#include <string>
+
+class DataBase;
 
 class Kernel
 {

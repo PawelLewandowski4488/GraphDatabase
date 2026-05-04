@@ -1,5 +1,7 @@
 #include "Pair.h"
 
+#include "PropertyType.h"
+
 PairBase* PairBase::CreatePair(const PropertyType& propertytype, const std::string& rawvalue)
 {
 	switch (propertytype.type)
