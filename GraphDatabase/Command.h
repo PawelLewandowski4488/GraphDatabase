@@ -3,7 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "Header.h"
+#include "ACTION.h"
+#include "ENTITY.h"
 
 struct ParsedCommand
 {
@@ -22,8 +23,6 @@ public:
 	static ParsedCommand Parse(const std::string& input);
 
 	//Helpers
-	static ACTION StringToACTION(const std::string& str);
-	static ENTITY StringToENTITY(const std::string& str);
 	static std::string Trim(const std::string& s);
 	static std::vector<std::string> SplitByComma(const std::string& content);
 	static std::vector<std::pair<std::string, std::string>> TokenizeToPairs(const std::string& content, bool validateTypes);

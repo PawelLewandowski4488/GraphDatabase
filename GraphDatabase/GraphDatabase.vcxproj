@@ -127,7 +127,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ACTION.cpp" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="ENTITY.cpp" />
     <ClCompile Include="Kernel.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="Edge.cpp" />
@@ -137,20 +139,21 @@
     <ClCompile Include="NodeType.cpp" />
     <ClCompile Include="Pair.cpp" />
     <ClCompile Include="PropertyType.cpp" />
-    <ClCompile Include="Type.cpp" />
+    <ClCompile Include="TYPE.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ACTION.h" />
     <ClInclude Include="Command.h" />
+    <ClInclude Include="ENTITY.h" />
     <ClInclude Include="Kernel.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="EdgeType.h" />
-    <ClInclude Include="Header.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="NodeType.h" />
     <ClInclude Include="Pair.h" />
     <ClInclude Include="PropertyType.h" />
-    <ClInclude Include="Type.h" />
+    <ClInclude Include="TYPE.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -42,10 +42,16 @@
     <ClCompile Include="Kernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Type.cpp">
+    <ClCompile Include="TYPE.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ACTION.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ENTITY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,9 +68,6 @@
     <ClInclude Include="PropertyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EdgeType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -77,10 +80,16 @@
     <ClInclude Include="Kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Type.h">
+    <ClInclude Include="TYPE.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ACTION.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ENTITY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

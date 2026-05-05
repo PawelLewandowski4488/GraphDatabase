@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Type.h"
+#include "TYPE.h"
 
 
 class PropertyType

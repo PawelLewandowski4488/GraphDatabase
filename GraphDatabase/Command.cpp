@@ -1,30 +1,10 @@
 #include "Command.h"
 
-#include "Type.h"
+#include "TYPE.h"
 
 #include <regex>
 #include <iostream>
 #include <sstream>
-
-ACTION Command::StringToACTION(const std::string& str) 
-{
-	if (str == "create") return ACTION::CREATE;
-	if (str == "delete") return ACTION::DELETE;
-	if (str == "change") return ACTION::CHANGE;
-	if (str == "use")    return ACTION::USE;
-	if (str == "unknown") return ACTION::UNKNOWN;
-	return ACTION::UNKNOWN;
-}
-
-ENTITY Command::StringToENTITY(const std::string& str)
-{
-	if (str == "database") return ENTITY::DATABASE;
-	if (str == "nodetype") return ENTITY::NODETYPE;
-	if (str == "node") return ENTITY::NODE;
-	if (str == "edgetype") return ENTITY::EDGETYPE;
-	if (str == "edge")    return ENTITY::EDGE;
-	return ENTITY::UNKNOWN;
-}
 
 std::string Command::Trim(const std::string& s) {
     size_t first = s.find_first_not_of(" \t\n\r");
@@ -123,8 +103,8 @@ ParsedCommand Command::Parse(const std::string& input) {
             throw std::runtime_error("Invalid structure");
         }
 
-        pc.action = StringToACTION(matches[1].str());
-        pc.entity = StringToENTITY(matches[2].str());
+        pc.action = ActionMapper::StringToAction(matches[1].str());
+        pc.entity = EntityMapper::StringToEntity(matches[2].str());
         pc.name = matches[3].str();
 
         if (pc.action == ACTION::UNKNOWN || pc.entity == ENTITY::UNKNOWN) {

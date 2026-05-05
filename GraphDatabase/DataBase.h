@@ -4,9 +4,9 @@
 #include <map>
 #include <memory>
 
-#include "NodeType.h"
+#include "NodeTYPE.h"
 #include "Node.h"
-#include "EdgeType.h"
+#include "EdgeTYPE.h"
 #include "Edge.h"
 
 class DataBase

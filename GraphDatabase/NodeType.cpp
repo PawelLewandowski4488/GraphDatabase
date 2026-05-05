@@ -1,6 +1,6 @@
-#include "NodeType.h"
+#include "NodeTYPE.h"
 
-#include "PropertyType.h"
+#include "PropertyTYPE.h"
 
 void NodeType::AddNode(Node* node)
 {

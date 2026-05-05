@@ -1,6 +1,6 @@
 #include "Pair.h"
 
-#include "PropertyType.h"
+#include "PropertyTYPE.h"
 
 PairBase* PairBase::CreatePair(const PropertyType& propertytype, const std::string& rawvalue)
 {

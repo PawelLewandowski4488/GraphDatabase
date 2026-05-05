@@ -1,7 +1,7 @@
-#include "EdgeType.h"
+#include "EdgeTYPE.h"
 
-#include "PropertyType.h"
-#include "NodeType.h"
+#include "PropertyTYPE.h"
+#include "NodeTYPE.h"
 
 void EdgeType::AddEdge(Edge* edge)
 {

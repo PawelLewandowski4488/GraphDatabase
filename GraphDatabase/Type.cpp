@@ -1,6 +1,4 @@
-#include "Type.h"
-
-#include <string>
+#include "TYPE.h"
 
 TYPE TypeMapper::StringToType(const std::string& str)
 {

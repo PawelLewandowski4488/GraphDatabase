@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "PropertyType.h"
+#include "PropertyTYPE.h"
 
 class Node;
 

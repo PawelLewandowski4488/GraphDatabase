@@ -1,4 +1,4 @@
-#include "PropertyType.h"
+#include "PropertyTYPE.h"
 
 std::string PropertyType::ToString()
 {

@@ -1,10 +1,10 @@
 #include "Kernel.h"
 
 #include "Command.h"
-#include "PropertyType.h"
-#include "NodeType.h"
+#include "PropertyTYPE.h"
+#include "NodeTYPE.h"
 #include "Node.h"
-#include "EdgeType.h"
+#include "EdgeTYPE.h"
 #include "Edge.h"
 #include "DataBase.h"
 

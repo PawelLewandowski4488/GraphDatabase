@@ -4,8 +4,8 @@
 #include <stdexcept>
 
 #include "Pair.h"
-#include "PropertyType.h"
-#include "NodeType.h"
+#include "PropertyTYPE.h"
+#include "NodeTYPE.h"
 
 
 Node::Node(NodeType* nodetype, long int id, std::string label, std::vector<std::pair<std::string, std::string>> raw_req, std::vector<std::pair<std::string, std::string>> raw_nreq) : nodetype(nodetype), id(id), label(label)

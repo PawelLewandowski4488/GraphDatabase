@@ -3,7 +3,7 @@
 #include <vector>
 
 
-#include "PropertyType.h"
+#include "PropertyTYPE.h"
 
 class Edge;
 class Node;

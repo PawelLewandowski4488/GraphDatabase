@@ -1,4 +1,0 @@
-#pragma once
-
-enum class ACTION { CREATE, DELETE, CHANGE, USE, UNKNOWN };
-enum class ENTITY { DATABASE, NODE, NODETYPE, EDGE, EDGETYPE, UNKNOWN };
