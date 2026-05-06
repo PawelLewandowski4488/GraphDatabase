@@ -25,6 +25,6 @@ public:
 	//Helpers
 	static std::string Trim(const std::string& s);
 	static std::vector<std::string> SplitByComma(const std::string& content);
-	static std::vector<std::pair<std::string, std::string>> TokenizeToPairs(const std::string& content, bool validateTypes);
+	static std::vector<std::pair<std::string, std::string>> TokenizeToProperties(const std::string& content, bool validateTypes);
 };
 

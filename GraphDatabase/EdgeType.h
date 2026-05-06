@@ -4,23 +4,22 @@
 
 
 #include "PropertyTYPE.h"
+#include "ObjectType.h"
 
 class Edge;
 class Node;
 class NodeType;
 
-class EdgeType
+class EdgeType : public ObjectType
 {
 public:
-	std::string name;
 	NodeType* from;
 	NodeType* to;
-	std::vector<PropertyType> req;
-	std::vector<PropertyType> nreq;
 
 	std::vector<Edge*> edges;
 
-	EdgeType(std::string name, NodeType* from, NodeType* to, std::vector<PropertyType> req, std::vector<PropertyType> nreq) : name(name), from(from), to(to), req(req), nreq(nreq) {}
+	EdgeType(long int id, std::string name, NodeType* from, NodeType* to, std::vector<PropertyType> req, std::vector<PropertyType> nreq) : ObjectType(id, std::move(name), std::move(req), std::move(nreq)), from(from), to(to) {}
+
 	void AddEdge(Edge* edge);
 	std::string ToString();
 };

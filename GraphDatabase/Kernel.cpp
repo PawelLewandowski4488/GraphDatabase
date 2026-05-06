@@ -64,13 +64,13 @@ void Kernel::Exec(std::string input)
 			}
 
 			std::vector<PropertyType> requiredFields;
-			for (const auto& pair : pc.weird) {
-				requiredFields.emplace_back(TypeMapper::StringToType(pair.first), pair.second);
+			for (const auto& Property : pc.weird) {
+				requiredFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
 			}
 
 			std::vector<PropertyType> optionalFields;
-			for (const auto& pair : pc.square) {
-				optionalFields.emplace_back(TypeMapper::StringToType(pair.first), pair.second);
+			for (const auto& Property : pc.square) {
+				optionalFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
 			}
 
 			auto newNodeType = std::make_unique<NodeType>(pc.name, requiredFields, optionalFields);
@@ -128,13 +128,13 @@ void Kernel::Exec(std::string input)
 			}
 
 			std::vector<PropertyType> requiredFields;
-			for (const auto& pair : pc.weird) {
-				requiredFields.emplace_back(TypeMapper::StringToType(pair.first), pair.second);
+			for (const auto& Property : pc.weird) {
+				requiredFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
 			}
 
 			std::vector<PropertyType> optionalFields;
-			for (const auto& pair : pc.square) {
-				optionalFields.emplace_back(TypeMapper::StringToType(pair.first), pair.second);
+			for (const auto& Property : pc.square) {
+				optionalFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
 			}
 			
 			auto newEdgeType = std::make_unique<EdgeType>(pc.name, FromIt->second.get(), ToIt->second.get(), requiredFields, optionalFields);

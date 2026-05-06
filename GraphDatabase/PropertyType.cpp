@@ -13,3 +13,29 @@ std::string PropertyType::ToString()
 
     return text + ": " + name;
 }
+
+bool PropertyType::Validate(const RawProperty& rawproperty) const
+{
+    if (this->name != rawproperty.name) return false;
+
+    try {
+        if (type == TYPE::INT) {
+            size_t pos;
+            std::stoi(rawproperty.value, &pos);
+            return pos == rawproperty.value.length();
+        }
+        else if (type == TYPE::FLOAT) {
+            size_t pos;
+            std::stof(rawproperty.value, &pos);
+            return pos == rawproperty.value.length();
+        }
+        else if (type == TYPE::STRING) {
+            return true; 
+        }
+    }
+    catch (...) {
+        return false; 
+    }
+
+    return false;
+}

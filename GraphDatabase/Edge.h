@@ -1,28 +1,27 @@
 #pragma once
+
+#include "Object.h"
+
 #include <string>
 #include <vector>
 #include <map>
 
 
-class PairBase;
+class PropertyBase;
 class PropertyType;
 class EdgeType;
 class Node;
 
-class Edge
+class Edge : public Object
 {
 	EdgeType* edgetype;
-	long int id;
 	Node* from;
 	Node* to;
-	std::vector<PairBase*> req;
-	std::vector<PairBase*> nreq;
 public:
-	Edge(EdgeType* edgetype, long int id, Node* from, Node* to, std::vector<std::pair<std::string, std::string>> req, std::vector<std::pair<std::string, std::string>> nreq);
+	Edge(long int id, EdgeType* edgetype, Node* from, Node* to, std::vector<PropertyBase*> req, std::vector<PropertyBase*> nreq) : Object(id, std::move(req), std::move(nreq)), edgetype(std::move(edgetype)), from(std::move(from)), to(std::move(to)) {}
 	~Edge();
 	Edge(const Edge&) = delete;
 	Edge& operator=(const Edge&) = delete;
 	std::string ToString();
-	std::string GetKey();
 };
 

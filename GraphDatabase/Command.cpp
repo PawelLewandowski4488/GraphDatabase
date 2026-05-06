@@ -13,7 +13,7 @@ std::string Command::Trim(const std::string& s) {
     return s.substr(first, (last - first + 1));
 }
 
-std::vector<std::pair<std::string, std::string>> Command::TokenizeToPairs(const std::string& content, bool validateTypes) {
+std::vector<std::pair<std::string, std::string>> Command::TokenizeToProperties(const std::string& content, bool validateTypes) {
     std::vector<std::pair<std::string, std::string>> result;
     if (Command::Trim(content).empty()) return result;
 
@@ -122,16 +122,16 @@ ParsedCommand Command::Parse(const std::string& input) {
         }
         case ENTITY::NODETYPE: {
             if (!Command::Trim(rawRound).empty()) throw std::runtime_error("NodeType must have empty ()");
-            pc.weird = TokenizeToPairs(rawWeird, true);  
-            pc.square = TokenizeToPairs(rawSquare, true);
+            pc.weird = TokenizeToProperties(rawWeird, true);  
+            pc.square = TokenizeToProperties(rawSquare, true);
             PrintParsedCommand(pc);
             break;
         }
         case ENTITY::NODE: {
             if (Command::Trim(rawRound).empty()) throw std::runtime_error("Node needs type in ()");
             pc.from = Command::Trim(rawRound);
-            pc.weird = TokenizeToPairs(rawWeird, false); 
-            pc.square = TokenizeToPairs(rawSquare, false);
+            pc.weird = TokenizeToProperties(rawWeird, false); 
+            pc.square = TokenizeToProperties(rawSquare, false);
             PrintParsedCommand(pc);
             break;
         }
@@ -140,8 +140,8 @@ ParsedCommand Command::Parse(const std::string& input) {
             if (rels.size() != 2) throw std::runtime_error("EdgeType needs (T1, T2)");
             pc.from = rels[0];
             pc.to = rels[1];
-            pc.weird = TokenizeToPairs(rawWeird, true);
-            pc.square = TokenizeToPairs(rawSquare, true);
+            pc.weird = TokenizeToProperties(rawWeird, true);
+            pc.square = TokenizeToProperties(rawSquare, true);
             PrintParsedCommand(pc);
             break;
         }
@@ -150,8 +150,8 @@ ParsedCommand Command::Parse(const std::string& input) {
             if (targets.size() != 2) throw std::runtime_error("Edge needs (N1, N2)");
             pc.from = targets[0];
             pc.to = targets[1];
-            pc.weird = TokenizeToPairs(rawWeird, false);
-            pc.square = TokenizeToPairs(rawSquare, false);
+            pc.weird = TokenizeToProperties(rawWeird, false);
+            pc.square = TokenizeToProperties(rawSquare, false);
             PrintParsedCommand(pc);
             break;
         }

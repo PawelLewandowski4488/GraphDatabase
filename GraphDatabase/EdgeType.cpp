@@ -11,10 +11,8 @@ void EdgeType::AddEdge(Edge* edge)
 std::string EdgeType::ToString()
 {
 	std::string text = "--EDGE TYPE--\n";
-	text += name + "\n";
+	text += ObjectType::ToString();
 	text += from->name + "\n";
 	text += to->name + "\n";
-	for (PropertyType p : req) text += p.ToString() + "\n";
-	for (PropertyType p : nreq) text += p.ToString() + "\n";
 	return text;
 }

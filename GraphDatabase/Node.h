@@ -1,27 +1,26 @@
 #pragma once
+
+#include "Object.h"
+
 #include <string>
 #include <vector>
 
-class PairBase;;
+class PropertyBase;;
 class PropertyType;
 class NodeType;
 class Edge;
 
-class Node 
+class Node : public Object
 {
 	NodeType* nodetype;
-	long int id;
-	std::string label;
-	std::vector<PairBase*> req;
-	std::vector<PairBase*> nreq;
 	std::vector<Edge*> out_edges;
 	std::vector<Edge*> in_edges;
 public:
-	Node(NodeType* nodetype, long int id, std::string label, std::vector<std::pair<std::string, std::string>> req, std::vector<std::pair<std::string, std::string>> nreq);
+	Node(long int id, NodeType* nodetype, std::vector<PropertyBase*> req, std::vector<PropertyBase*> nreq) : Object(id, std::move(req), std::move(nreq)), nodetype(std::move(nodetype)) {}
 	~Node();
 	Node(const Node&) = delete;
 	Node& operator=(const Node&) = delete;
-	std::string ToString();
-	const std::string& GetLabel();
+
+	std::string ToString() const override;
 };
 
