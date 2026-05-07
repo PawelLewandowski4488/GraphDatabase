@@ -13,41 +13,6 @@ std::string Command::Trim(const std::string& s) {
     return s.substr(first, (last - first + 1));
 }
 
-std::vector<std::pair<std::string, std::string>> Command::TokenizeToProperties(const std::string& content, bool validateTypes) {
-    std::vector<std::pair<std::string, std::string>> result;
-    if (Command::Trim(content).empty()) return result;
-
-    std::string cleanContent = content;
-
-    for (char& c : cleanContent) {
-        if (c == ',') c = ' ';
-    }
-
-    std::vector<std::string> tokens;
-    std::stringstream ss(cleanContent);
-    std::string word;
-    while (ss >> word) {
-        tokens.push_back(word);
-    }
-    if (tokens.size() % 2 != 0) {
-        throw std::runtime_error("Odd number of elements in brackets");
-    }
-
-    for (size_t i = 0; i < tokens.size(); i += 2) {
-        std::string key = tokens[i];
-        std::string value = tokens[i + 1];
-
-        if (validateTypes) {
-            if (TypeMapper::StringToType(key) == TYPE::UNKNOWN) {
-                throw std::runtime_error("Invalid data type definition: " + key);
-            }
-        }
-        result.push_back({ key, value });
-    }
-
-    return result;
-}
-
 std::vector<std::string> Command::SplitByComma(const std::string& content) {
     std::vector<std::string> result;
     std::stringstream ss(content);
@@ -62,104 +27,184 @@ std::vector<std::string> Command::SplitByComma(const std::string& content) {
     return result;
 }
 
-void PrintParsedCommand(const ParsedCommand& pc) {
-    std::cout << "--- Parsed Command Details ---" << std::endl;
+std::string Command::ExtractContent(std::string& source, char open, char close) {
+    size_t startPos = source.find(open);
+    size_t endPos = source.find(close);
 
-    // Nazwa (label)
-    std::cout << "Name:   \"" << pc.name << "\"" << std::endl;
-
-    // Relacje/Typy ()
-    if (!pc.to.empty()) {
-        std::cout << "Round:  (" << pc.from << ", " << pc.to << ")" << std::endl;
-    }
-    else {
-        std::cout << "Round:  (" << pc.from << ")" << std::endl;
+    if (startPos == std::string::npos || endPos == std::string::npos) {
+        return "";
     }
 
-    // Dane wymagane {}
-    std::cout << "Weird:  { ";
-    for (const auto& p : pc.weird) {
-        std::cout << p.first << ":" << p.second << " ";
+    if (endPos < startPos) {
+        throw std::runtime_error("Malformed brackets: closing bracket before opening");
     }
-    std::cout << "}" << std::endl;
 
-    // Dane opcjonalne []
-    std::cout << "Square: [ ";
-    for (const auto& p : pc.square) {
-        std::cout << p.first << ":" << p.second << " ";
-    }
-    std::cout << "]" << std::endl;
+    std::string content = source.substr(startPos + 1, endPos - startPos - 1);
 
-    std::cout << "------------------------------" << std::endl;
+    source.erase(0, endPos + 1);
+
+    return Command::Trim(content);
 }
 
+std::vector<PropertyType> Command::ConvertToPropertyTypes(const std::string& content) {
+    std::vector<PropertyType> result;
+    if (Command::Trim(content).empty()) return result;
+
+    std::string cleanContent = content;
+    for (char& c : cleanContent) {
+        if (c == ',') c = ' ';
+    }
+
+    std::stringstream ss(cleanContent);
+    std::string typeStr, nameStr;
+
+    while (ss >> typeStr >> nameStr) {
+        TYPE t = TypeMapper::StringToType(typeStr);
+
+        if (t == TYPE::UNKNOWN) {
+            throw std::runtime_error("Unknown data type: " + typeStr);
+        }
+
+        result.push_back(PropertyType(t, nameStr));
+    }
+
+    if (ss.eof() == false) {
+    }
+
+    return result;
+}
+
+bool Command::IsValidName(const std::string& name) {
+    if (name.empty()) return false;
+    for (char c : name) {
+        if (!std::isalnum(static_cast<unsigned char>(c)) && c != '_') {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<RawProperty> Command::ConvertToRawProperties(std::string content) {
+    std::vector<RawProperty> result;
+    content = Trim(content);
+    if (content.empty()) return result;
+
+    std::stringstream ss(content);
+    std::string key;
+
+    while (ss >> key) {
+        if (key.back() == ',') key.pop_back();
+
+        ss >> std::ws;
+
+        std::string value;
+        if (ss.peek() == '"') {
+            ss.get(); 
+            std::getline(ss, value, '"'); 
+        }
+        else {
+            std::string temp;
+            ss >> temp;
+            if (!temp.empty() && temp.back() == ',') temp.pop_back();
+            value = temp;
+        }
+
+        result.push_back(RawProperty(key, value));
+
+        ss >> std::ws;
+        if (ss.peek() == ',') ss.get();
+    }
+
+    return result;
+}
 
 ParsedCommand Command::Parse(const std::string& input) {
     ParsedCommand pc;
-    std::regex pattern(R"custom(^\s*([a-zA-Z]+)\s+([a-zA-Z]+)\s*"([^"]*)"\s*\(([^)]*)\)\s*\{([^}]*)\}\s*\[([^\]]*)\]\s*$)custom");
-    std::smatch matches;
+    std::stringstream ss(input);
+    std::string actionStr, entityStr, nameStr;
+
+    if (!(ss >> actionStr >> entityStr >> nameStr)) {
+        pc.action = ACTION::UNKNOWN;
+        return pc;
+    }
+
+    pc.action = ActionMapper::StringToAction(actionStr);
+    pc.entity = EntityMapper::StringToEntity(entityStr);
+    pc.name = nameStr; 
+
+    if (pc.action == ACTION::UNKNOWN || pc.entity == ENTITY::UNKNOWN) {
+        return pc;
+    }
+
+    if (!IsValidName(nameStr)) {
+        throw std::runtime_error("Invalid characters in name: " + nameStr);
+        return pc;
+    }
+
+    std::string remainder;
+    std::getline(ss, remainder);
+    remainder = Trim(remainder);
+
     try {
-        if (!std::regex_match(input, matches, pattern)) {
-            throw std::runtime_error("Invalid structure");
-        }
+        switch (pc.action) {
+        case ACTION::CREATE:
+            switch (pc.entity) {
+            case ENTITY::DATABASE: //
+                break;
+            case ENTITY::NODETYPE: //pt_req, pt_nreq
+                pc.pt_req = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '{', '}'));
+                pc.pt_nreq = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '[', ']'));
+                break;
+            case ENTITY::NODE:  //rp_req, rp_nreq
+                pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
+                pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
+                break;
+            case ENTITY::EDGETYPE: //from_name, to_name, pt_req, pt_nreq
 
-        pc.action = ActionMapper::StringToAction(matches[1].str());
-        pc.entity = EntityMapper::StringToEntity(matches[2].str());
-        pc.name = matches[3].str();
 
-        if (pc.action == ACTION::UNKNOWN || pc.entity == ENTITY::UNKNOWN) {
-            throw std::runtime_error("Unknown action or entity");
-        }
-
-        std::string rawRound = matches[4].str();
-        std::string rawWeird = matches[5].str();
-        std::string rawSquare = matches[6].str();
+                pc.pt_req = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '{', '}'));
+                pc.pt_nreq = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '[', ']'));
+                break;
+            case ENTITY::EDGE:  //from_id, to_id, rp_req, rp_nreq
 
 
-        switch (pc.entity) {
-        case ENTITY::DATABASE: {
+                pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
+                pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
+                break;
+            }
             break;
-        }
-        case ENTITY::NODETYPE: {
-            if (!Command::Trim(rawRound).empty()) throw std::runtime_error("NodeType must have empty ()");
-            pc.weird = TokenizeToProperties(rawWeird, true);  
-            pc.square = TokenizeToProperties(rawSquare, true);
-            PrintParsedCommand(pc);
+        case ACTION::DELETE:
+            switch (pc.entity) {
+            case ENTITY::DATABASE: //get name
+                break;
+            case ENTITY::NODETYPE: //get name
+                break;
+            case ENTITY::NODE:  //get name, id
+                break;
+            case ENTITY::EDGETYPE:  //get name
+                break;
+            case ENTITY::EDGE: //get name, from_id, to_id
+                break;
+            }
             break;
-        }
-        case ENTITY::NODE: {
-            if (Command::Trim(rawRound).empty()) throw std::runtime_error("Node needs type in ()");
-            pc.from = Command::Trim(rawRound);
-            pc.weird = TokenizeToProperties(rawWeird, false); 
-            pc.square = TokenizeToProperties(rawSquare, false);
-            PrintParsedCommand(pc);
-            break;
-        }
-        case ENTITY::EDGETYPE: {
-            auto rels = SplitByComma(rawRound);
-            if (rels.size() != 2) throw std::runtime_error("EdgeType needs (T1, T2)");
-            pc.from = rels[0];
-            pc.to = rels[1];
-            pc.weird = TokenizeToProperties(rawWeird, true);
-            pc.square = TokenizeToProperties(rawSquare, true);
-            PrintParsedCommand(pc);
-            break;
-        }
-        case ENTITY::EDGE: {
-            auto targets = SplitByComma(rawRound);
-            if (targets.size() != 2) throw std::runtime_error("Edge needs (N1, N2)");
-            pc.from = targets[0];
-            pc.to = targets[1];
-            pc.weird = TokenizeToProperties(rawWeird, false);
-            pc.square = TokenizeToProperties(rawSquare, false);
-            PrintParsedCommand(pc);
-            break;
-        }
-        default:
+        case ACTION::CHANGE:
+            switch (pc.entity) {
+            case ENTITY::DATABASE: //return action unknown
+                break;
+            case ENTITY::NODETYPE: //get name, ???
+                break;
+            case ENTITY::NODE: //get name, id, rp_req, rp_nreq
+                break;
+            case ENTITY::EDGETYPE:  //get name, ???
+                break;
+            case ENTITY::EDGE: //get name, from_id, to_id, rp_req, rp_nreq
+                break;
+            }
             break;
         }
     }
-    catch (...) {
+    catch (const std::exception& e) {
+        std::cerr << "Parser error: " << e.what() << std::endl;
         pc.action = ACTION::UNKNOWN;
     }
 

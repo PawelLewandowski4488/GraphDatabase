@@ -8,7 +8,7 @@ void EdgeType::AddEdge(Edge* edge)
 	edges.push_back(edge);
 }
 
-std::string EdgeType::ToString()
+std::string EdgeType::ToString() const
 {
 	std::string text = "--EDGE TYPE--\n";
 	text += ObjectType::ToString();
