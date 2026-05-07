@@ -16,6 +16,7 @@ public:
 	virtual ~Object() = default;
 
 	long int GetId();
+	void SetId(const long int& id);
 	virtual std::string ToString() const;
 };
 

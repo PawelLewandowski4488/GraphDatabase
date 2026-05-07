@@ -5,6 +5,11 @@ long int Object::GetId()
     return id;
 }
 
+void Object::SetId(const long int& id)
+{
+    this->id = id;
+}
+
 std::string Object::ToString() const
 {
     std::string text = std::to_string(id) + "\n";

@@ -26,6 +26,11 @@ bool ObjectType::Validate(std::vector<RawProperty> req, std::vector<RawProperty>
     return checkMatch(req, this->req, reqOut) && checkMatch(nreq, this->nreq, nreqOut);
 }
 
+void ObjectType::SetId(long int id)
+{
+    this->id = id;
+}
+
 std::string ObjectType::ToString() const
 {
     std::string text = name + "\n";

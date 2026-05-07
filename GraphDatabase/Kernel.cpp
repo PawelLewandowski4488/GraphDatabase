@@ -87,9 +87,9 @@ void Kernel::Exec(std::string input)
 				std::vector<PropertyBase*> nreq;
 
 				if (typeIt->second.get()->Validate(pc.rp_req, pc.rp_nreq, req, nreq)) {
-					auto newNode = std::make_unique<Node>(nextId, typeIt->second.get(), req, nreq);
+					auto newNode = std::make_unique<Node>(nextId, req, nreq);
 
-					current_db->AddNode(std::move(newNode));
+					current_db->AddNode(std::move(newNode), typeIt->second.get());
 
 					std::cout << "Success: Node '" << "' [ID: " << nextId << "] created as type '" << pc.name << "'.\n";
 					auto it = current_db->nodes.find(nextId);

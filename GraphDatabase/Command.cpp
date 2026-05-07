@@ -178,32 +178,34 @@ std::pair<std::string, std::string> Command::ConvertToNamePair(const std::string
 
 ParsedCommand Command::Parse(const std::string& input) {
     ParsedCommand pc;
-    std::stringstream ss(input);
-    std::string actionStr, entityStr, nameStr;
-
-    if (!(ss >> actionStr >> entityStr >> nameStr)) {
-        pc.action = ACTION::UNKNOWN;
-        return pc;
-    }
-
-    pc.action = ActionMapper::StringToAction(actionStr);
-    pc.entity = EntityMapper::StringToEntity(entityStr);
-    pc.name = nameStr; 
-
-    if (pc.action == ACTION::UNKNOWN || pc.entity == ENTITY::UNKNOWN) {
-        return pc;
-    }
-
-    if (!IsValidName(nameStr)) {
-        throw std::runtime_error("Invalid characters in name: " + nameStr);
-        return pc;
-    }
-
-    std::string remainder;
-    std::getline(ss, remainder);
-    remainder = Trim(remainder);
 
     try {
+        std::stringstream ss(input);
+        std::string actionStr, entityStr, nameStr;
+
+        if (!(ss >> actionStr >> entityStr >> nameStr)) {
+            pc.action = ACTION::UNKNOWN;
+            return pc;
+        }
+
+        pc.action = ActionMapper::StringToAction(actionStr);
+        pc.entity = EntityMapper::StringToEntity(entityStr);
+        pc.name = nameStr;
+
+        if (pc.action == ACTION::UNKNOWN || pc.entity == ENTITY::UNKNOWN) {
+            return pc;
+        }
+
+        if (!IsValidName(nameStr)) {
+            throw std::runtime_error("Invalid characters in name: " + nameStr);
+            return pc;
+        }
+
+        std::string remainder;
+        std::getline(ss, remainder);
+        remainder = Trim(remainder);
+
+
         switch (pc.action) {
         case ACTION::CREATE:
             switch (pc.entity) {
