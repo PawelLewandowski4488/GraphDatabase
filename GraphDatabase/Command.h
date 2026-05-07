@@ -36,14 +36,18 @@ class Command
 public:
 	static ParsedCommand Parse(const std::string& input);
 
-	//Extract
+	//Convert
 	static std::vector<PropertyType> ConvertToPropertyTypes(const std::string& content);
 	static std::vector<RawProperty> ConvertToRawProperties(std::string content);
+	static std::vector<PropertyType> ConvertToChangedPropertyTypes(const std::string& content, bool to_add);
+	static long int ConvertToId(const std::string& content);
+	static std::pair<long int, long int> ConvertToIdPair(const std::string& content);
+	static std::pair<std::string, std::string> ConvertToNamePair(const std::string& content);
 
 	//Helpers
 	static bool IsValidName(const std::string& name);
 	static std::string Trim(const std::string& s);
-	static std::string ExtractContent(std::string& source, char open, char close);
+	static std::string ExtractContent(const std::string& source, char open, char close);
 	static std::vector<std::string> SplitByComma(const std::string& content);
 	static std::vector<std::pair<std::string, std::string>> TokenizeToProperties(const std::string& content, bool validateTypes);
 };

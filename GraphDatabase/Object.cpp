@@ -1,5 +1,10 @@
 #include "Object.h"
 
+long int Object::GetId()
+{
+    return id;
+}
+
 std::string Object::ToString() const
 {
     std::string text = std::to_string(id) + "\n";

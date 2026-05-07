@@ -14,7 +14,7 @@ void DataBase::AddNodeType(std::unique_ptr<NodeType> nodetype)
 
 void DataBase::AddNode(std::unique_ptr <Node> node)
 {
-	nodes.emplace(node->GetLabel(), std::move(node));
+	nodes.emplace(node->GetId(), std::move(node));
 }
 
 void DataBase::AddEdgeType(std::unique_ptr <EdgeType> edgetype)
@@ -23,7 +23,7 @@ void DataBase::AddEdgeType(std::unique_ptr <EdgeType> edgetype)
 }
 void DataBase::AddEdge(std::unique_ptr <Edge> edge)
 {
-	edges.emplace(edge->GetKey(), std::move(edge));
+	edges.emplace(edge->GetId(), std::move(edge));
 }
 
 std::string DataBase::GetName()

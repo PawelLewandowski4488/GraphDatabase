@@ -63,17 +63,9 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			std::vector<PropertyType> requiredFields;
-			for (const auto& Property : pc.weird) {
-				requiredFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
-			}
+			long int nextId = static_cast<long int>(current_db->edges.size() + 1);
 
-			std::vector<PropertyType> optionalFields;
-			for (const auto& Property : pc.square) {
-				optionalFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
-			}
-
-			auto newNodeType = std::make_unique<NodeType>(pc.name, requiredFields, optionalFields);
+			auto newNodeType = std::make_unique<NodeType>(nextId, pc.name, pc.pt_req, pc.pt_nreq);
 			current_db->AddNodeType(std::move(newNodeType));
 
 			std::cout << "Success: NodeType '" << pc.name << "' created.\n\n";
@@ -82,27 +74,27 @@ void Kernel::Exec(std::string input)
 			break;
 		}
 		case ENTITY::NODE: {
-			if (current_db->nodes.find(pc.name) != current_db->nodes.end()) {
-				std::cout << "Error: Node '" << pc.name << "' already exists.\n";
-				break;
-			}
-
-			auto typeIt = current_db->nodetypes.find(pc.from);
+			auto typeIt = current_db->nodetypes.find(pc.name);
 			if (typeIt == current_db->nodetypes.end()) {
-				std::cout << "Error: NodeType '" << pc.from << "' not found.\n";
+				std::cout << "Error: NodeType '" << pc.name << "' not found.\n";
 				break;
 			}
 
 			try {
 				long int nextId = static_cast<long int>(current_db->nodes.size() + 1);
 
-				auto newNode = std::make_unique<Node>(typeIt->second.get(), nextId, pc.name, pc.weird, pc.square);
+				std::vector<PropertyBase*> req;
+				std::vector<PropertyBase*> nreq;
 
-				current_db->AddNode(std::move(newNode));
+				if (typeIt->second.get()->Validate(pc.rp_req, pc.rp_nreq, req, nreq)) {
+					auto newNode = std::make_unique<Node>(nextId, typeIt->second.get(), req, nreq);
 
-				std::cout << "Success: Node '" << pc.name << "' [ID: " << nextId << "] created as type '" << pc.from << "'.\n";
-				auto it = current_db->nodes.find(pc.name);
-				std::cout << it->second->ToString() << "\n";
+					current_db->AddNode(std::move(newNode));
+
+					std::cout << "Success: Node '" << "' [ID: " << nextId << "] created as type '" << pc.name << "'.\n";
+					auto it = current_db->nodes.find(nextId);
+					std::cout << it->second->ToString() << "\n";
+				}
 			}
 			catch (const std::exception& e) {
 				std::cout << "Node Creation Error: " << e.what() << "\n";
@@ -115,33 +107,24 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			auto FromIt = current_db->nodetypes.find(pc.from);
-			if (current_db->nodetypes.find(pc.from) == current_db->nodetypes.end()) {
-				std::cout << "Error: Source NodeType '" << pc.from << "' not found.\n";
+			auto FromIt = current_db->nodetypes.find(pc.from_name);
+			if (current_db->nodetypes.find(pc.from_name) == current_db->nodetypes.end()) {
+				std::cout << "Error: Source NodeType '" << pc.from_name << "' not found.\n";
 				break;
 			}
 
-			auto ToIt = current_db->nodetypes.find(pc.to);
-			if (current_db->nodetypes.find(pc.to) == current_db->nodetypes.end()) {
-				std::cout << "Error: Target NodeType '" << pc.to << "' not found.\n";
+			auto ToIt = current_db->nodetypes.find(pc.to_name);
+			if (current_db->nodetypes.find(pc.to_name) == current_db->nodetypes.end()) {
+				std::cout << "Error: Target NodeType '" << pc.to_name << "' not found.\n";
 				break;
 			}
 
-			std::vector<PropertyType> requiredFields;
-			for (const auto& Property : pc.weird) {
-				requiredFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
-			}
+			long int nextId = static_cast<long int>(current_db->edges.size() + 1);
 
-			std::vector<PropertyType> optionalFields;
-			for (const auto& Property : pc.square) {
-				optionalFields.emplace_back(TypeMapper::StringToType(Property.first), Property.second);
-			}
-			
-			auto newEdgeType = std::make_unique<EdgeType>(pc.name, FromIt->second.get(), ToIt->second.get(), requiredFields, optionalFields);
-
+			auto newEdgeType = std::make_unique<EdgeType>(nextId, pc.name, FromIt->second.get(), ToIt->second.get(), pc.pt_req, pc.pt_nreq);
 			current_db->AddEdgeType(std::move(newEdgeType));
 
-			std::cout << "Success: EdgeType '" << pc.name << "' created (" << pc.from << " -> " << pc.to << ").\n";
+			std::cout << "Success: EdgeType '" << pc.name << "' created (" << pc.from_name << " -> " << pc.to_name << ").\n";
 			break;
 		}
 		case ENTITY::EDGE: {
@@ -151,26 +134,30 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			auto FromIt = current_db->nodes.find(pc.from);
+			auto FromIt = current_db->nodes.find(pc.from_id);
 			if (FromIt == current_db->nodes.end()) {
-				std::cout << "Error: Source ('" << pc.from << "') node not found.\n";
+				std::cout << "Error: Source ('" << pc.from_id << "') node not found.\n";
 				break;
 			}
 
-			auto ToIt = current_db->nodes.find(pc.to);
+			auto ToIt = current_db->nodes.find(pc.to_id);
 
 			if (ToIt == current_db->nodes.end()) {
-				std::cout << "Error: Target ('" << pc.to << "') node not found.\n";
+				std::cout << "Error: Target ('" << pc.to_id << "') node not found.\n";
 				break;
 			}
 
 			try {
 				long int nextId = static_cast<long int>(current_db->edges.size() + 1);
+				std::vector<PropertyBase*> req;
+				std::vector<PropertyBase*> nreq;
 
-				auto newEdge = std::make_unique<Edge>(typeIt->second.get(), nextId, FromIt->second.get(), ToIt->second.get(), pc.weird, pc.square);
+				if (typeIt->second.get()->Validate(pc.rp_req, pc.rp_nreq, req, nreq)) {
+					auto newEdge = std::make_unique<Edge>(nextId, typeIt->second.get(), FromIt->second.get(), ToIt->second.get(), req, nreq);
 
-				current_db->AddEdge(std::move(newEdge));
-				std::cout << "Success: Edge of type '" << pc.name << "' created with ID: " << nextId << ".\n";
+					current_db->AddEdge(std::move(newEdge));
+					std::cout << "Success: Edge of type '" << pc.name << "' created with ID: " << nextId << ".\n";
+				}
 			}
 			catch (const std::exception& e) {
 				std::cout << "Edge Creation Error: " << e.what() << "\n";

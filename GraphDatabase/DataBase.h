@@ -14,9 +14,9 @@ class DataBase
 public:
 	std::string name;
 	std::map<std::string, std::unique_ptr<NodeType>> nodetypes;
-	std::map<std::string, std::unique_ptr<Node>> nodes;
+	std::map<long int, std::unique_ptr<Node>> nodes; //todo
 	std::map<std::string, std::unique_ptr<EdgeType>> edgetypes;
-	std::map<std::string, std::unique_ptr<Edge>> edges;
+	std::map<long int, std::unique_ptr<Edge>> edges; //todo
 
 	DataBase(std::string name) : name(name) {}
 	~DataBase();

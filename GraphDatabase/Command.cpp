@@ -27,7 +27,7 @@ std::vector<std::string> Command::SplitByComma(const std::string& content) {
     return result;
 }
 
-std::string Command::ExtractContent(std::string& source, char open, char close) {
+std::string Command::ExtractContent(const std::string& source, char open, char close) {
     size_t startPos = source.find(open);
     size_t endPos = source.find(close);
 
@@ -40,8 +40,6 @@ std::string Command::ExtractContent(std::string& source, char open, char close) 
     }
 
     std::string content = source.substr(startPos + 1, endPos - startPos - 1);
-
-    source.erase(0, endPos + 1);
 
     return Command::Trim(content);
 }
@@ -69,6 +67,39 @@ std::vector<PropertyType> Command::ConvertToPropertyTypes(const std::string& con
     }
 
     if (ss.eof() == false) {
+        //error
+    }
+
+    return result;
+}
+
+std::vector<PropertyType> Command::ConvertToChangedPropertyTypes(const std::string& content, bool to_add) {
+    std::vector<PropertyType> result;
+    if (Command::Trim(content).empty()) return result;
+    std::string cleanContent = content;
+    for (char& c : cleanContent) {
+        if (c == ',') c = ' ';
+    }
+
+    std::stringstream ss(cleanContent);
+    std::string typeStr, nameStr;
+
+    while (ss >> typeStr >> nameStr) {
+        if ((typeStr.at(0) != '+' && to_add) && (typeStr.at(0) != '-' && !to_add)) {
+            continue;
+        }
+        typeStr.erase(0, 1);
+        TYPE t = TypeMapper::StringToType(typeStr);
+
+        if (t == TYPE::UNKNOWN) {
+            throw std::runtime_error("Unknown data type: " + typeStr);
+        }
+
+        result.push_back(PropertyType(t, nameStr));
+    }
+
+    if (ss.eof() == false) {
+        //error
     }
 
     return result;
@@ -118,6 +149,33 @@ std::vector<RawProperty> Command::ConvertToRawProperties(std::string content) {
     return result;
 }
 
+long int Command::ConvertToId(const std::string& content) {
+    if (content.empty()) return -1;
+    try {
+        return std::stol(content);
+    }
+    catch (...) {
+        return -1;
+    }
+}
+
+std::pair<long int, long int> Command::ConvertToIdPair(const std::string& content) {
+    auto parts = Command::SplitByComma(content);
+    if (parts.size() < 2) return { -1, -1 };
+    try {
+        return { std::stol(parts[0]), std::stol(parts[1]) };
+    }
+    catch (...) {
+        return { -1, -1 };
+    }
+}
+
+std::pair<std::string, std::string> Command::ConvertToNamePair(const std::string& content) {
+    auto parts = Command::SplitByComma(content);
+    if (parts.size() < 2) return { "", "" };
+    return { parts[0], parts[1] };
+}
+
 ParsedCommand Command::Parse(const std::string& input) {
     ParsedCommand pc;
     std::stringstream ss(input);
@@ -149,25 +207,29 @@ ParsedCommand Command::Parse(const std::string& input) {
         switch (pc.action) {
         case ACTION::CREATE:
             switch (pc.entity) {
-            case ENTITY::DATABASE: //
+            case ENTITY::DATABASE: 
                 break;
-            case ENTITY::NODETYPE: //pt_req, pt_nreq
+            case ENTITY::NODETYPE: 
                 pc.pt_req = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '{', '}'));
                 pc.pt_nreq = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '[', ']'));
                 break;
-            case ENTITY::NODE:  //rp_req, rp_nreq
+            case ENTITY::NODE:  
                 pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
                 pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
                 break;
-            case ENTITY::EDGETYPE: //from_name, to_name, pt_req, pt_nreq
-
-
+            case ENTITY::EDGETYPE: {
+                auto n = Command::ConvertToNamePair(Command::ExtractContent(remainder, '(', ')'));
+                pc.from_name = n.first;
+                pc.to_name = n.second;
+                }
                 pc.pt_req = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '{', '}'));
                 pc.pt_nreq = Command::ConvertToPropertyTypes(Command::ExtractContent(remainder, '[', ']'));
                 break;
-            case ENTITY::EDGE:  //from_id, to_id, rp_req, rp_nreq
-
-
+            case ENTITY::EDGE: {
+                auto i = Command::ConvertToIdPair(Command::ExtractContent(remainder, '(', ')'));
+                pc.from_id = i.first;
+                pc.to_id = i.second;
+                }
                 pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
                 pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
                 break;
@@ -175,29 +237,52 @@ ParsedCommand Command::Parse(const std::string& input) {
             break;
         case ACTION::DELETE:
             switch (pc.entity) {
-            case ENTITY::DATABASE: //get name
+            case ENTITY::DATABASE: 
                 break;
-            case ENTITY::NODETYPE: //get name
+            case ENTITY::NODETYPE: 
                 break;
-            case ENTITY::NODE:  //get name, id
+            case ENTITY::NODE:  
+                pc.id = Command::ConvertToId(Command::ExtractContent(remainder, '(', ')'));
                 break;
-            case ENTITY::EDGETYPE:  //get name
+            case ENTITY::EDGETYPE:  
                 break;
-            case ENTITY::EDGE: //get name, from_id, to_id
+            case ENTITY::EDGE: {
+                auto i = Command::ConvertToIdPair(Command::ExtractContent(remainder, '(', ')'));
+                pc.from_id = i.first;
+                pc.to_id = i.second;
+                }
                 break;
             }
             break;
         case ACTION::CHANGE:
             switch (pc.entity) {
-            case ENTITY::DATABASE: //return action unknown
+            case ENTITY::DATABASE:
+                pc.action = ACTION::UNKNOWN;
                 break;
-            case ENTITY::NODETYPE: //get name, ???
+            case ENTITY::NODETYPE:
+                pc.pt_req = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '{', '}'), true);
+                pc.pt_req_to_remove = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '{', '}'), false);
+                pc.pt_nreq = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '[', ']'), true);
+                pc.pt_nreq_to_remove = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '[', ']'), false);
                 break;
-            case ENTITY::NODE: //get name, id, rp_req, rp_nreq
+            case ENTITY::NODE:
+                pc.id = Command::ConvertToId(Command::ExtractContent(remainder, '(', ')'));
+                pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
+                pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
                 break;
-            case ENTITY::EDGETYPE:  //get name, ???
+            case ENTITY::EDGETYPE:
+                pc.pt_req = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '{', '}'), true);
+                pc.pt_req_to_remove = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '{', '}'), false);
+                pc.pt_nreq = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '[', ']'), true);
+                pc.pt_nreq_to_remove = Command::ConvertToChangedPropertyTypes(Command::ExtractContent(remainder, '[', ']'), false);
                 break;
-            case ENTITY::EDGE: //get name, from_id, to_id, rp_req, rp_nreq
+            case ENTITY::EDGE: {
+                auto i = Command::ConvertToIdPair(Command::ExtractContent(remainder, '(', ')'));
+                pc.from_id = i.first;
+                pc.to_id = i.second;
+                }
+                pc.rp_req = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '{', '}'));
+                pc.rp_nreq = Command::ConvertToRawProperties(Command::ExtractContent(remainder, '[', ']'));
                 break;
             }
             break;

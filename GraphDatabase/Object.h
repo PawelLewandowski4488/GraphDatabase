@@ -15,6 +15,7 @@ public:
 	Object(long int id, std::vector<PropertyBase*> req, std::vector<PropertyBase*> nreq) : id(id), req(std::move(req)), nreq(std::move(nreq)) {}
 	virtual ~Object() = default;
 
+	long int GetId();
 	virtual std::string ToString() const;
 };
 
