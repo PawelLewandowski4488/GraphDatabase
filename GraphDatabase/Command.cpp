@@ -5,6 +5,7 @@
 #include <regex>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 std::string Command::Trim(const std::string& s) {
     size_t first = s.find_first_not_of(" \t\n\r");

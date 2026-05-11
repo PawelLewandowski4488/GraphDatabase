@@ -1,0 +1,20 @@
+create nodetype "Person"{string imie, int wiek}[int numer]
+
+create Person "Paweł"{imie "Paweł", wiek 34, numer 34}
+
+create Person "Marek"{imie "Marek", wiek 28, numer 13}
+
+create edgetype "pracujez"(from Person, to Person){int ile_lat}[bool czy_lubi]
+
+create pracujez "..."(Person Paweł, Person Marek){ile_lat 5}[czy_lubi true]
+
+
+create nodetype "Person"{string imie, int wiek}[int numer]
+
+create node "Paweł" (Person){imie Paweł, int 17}[int 100100100]
+
+create node "Jan" (Person){imie Jan, int 20}[200200200]
+
+create edgetype "pracujez"(Person, Person){int ile_lat}[string costam]
+
+create edge ""(Paweł, Jan){ile_lat 7}[costam xyz]

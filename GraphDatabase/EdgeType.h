@@ -18,7 +18,7 @@ public:
 
 	std::vector<Edge*> edges;
 
-	EdgeType(long int id, std::string name, NodeType* from, NodeType* to, std::vector<PropertyType> req, std::vector<PropertyType> nreq) : ObjectType(id, std::move(name), std::move(req), std::move(nreq)), from(from), to(to) {}
+	EdgeType(std::string name, NodeType* from, NodeType* to, std::vector<PropertyType> req, std::vector<PropertyType> nreq) : ObjectType(std::move(name), std::move(req), std::move(nreq)), from(from), to(to) {}
 
 	void AddEdge(Edge* edge);
 	std::string ToString() const override;

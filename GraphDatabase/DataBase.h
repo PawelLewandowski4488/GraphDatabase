@@ -28,9 +28,9 @@ public:
 	DataBase& operator=(DataBase&&) noexcept = default;
 
 	void AddNodeType(std::unique_ptr<NodeType> nodetype);
-	void AddNode(std::unique_ptr<Node> node, NodeType* nodetype, long int forcedid);
+	void AddNode(std::unique_ptr<Node> node, NodeType* nodetype, long int forcedid = -1);
 	void AddEdgeType(std::unique_ptr<EdgeType> edgetype);
-	void AddEdge(std::unique_ptr<Edge> edge, EdgeType* edgetype, long int forcedid);
+	void AddEdge(std::unique_ptr<Edge> edge, EdgeType* edgetype, long int forcedid = -1);
 
 	void RemoveNodeType(std::string name);
 	void RemoveNode(std::string name);

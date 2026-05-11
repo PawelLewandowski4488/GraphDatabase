@@ -63,14 +63,8 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			long int nextId = static_cast<long int>(current_db->edges.size() + 1);
-
-			auto newNodeType = std::make_unique<NodeType>(nextId, pc.name, pc.pt_req, pc.pt_nreq);
+			auto newNodeType = std::make_unique<NodeType>(pc.name, pc.pt_req, pc.pt_nreq);
 			current_db->AddNodeType(std::move(newNodeType));
-
-			std::cout << "Success: NodeType '" << pc.name << "' created.\n\n";
-			auto it = current_db->nodetypes.find(pc.name);
-			std::cout << it->second->ToString() << "\n";
 			break;
 		}
 		case ENTITY::NODE: {
@@ -90,10 +84,6 @@ void Kernel::Exec(std::string input)
 					auto newNode = std::make_unique<Node>(nextId, req, nreq);
 
 					current_db->AddNode(std::move(newNode), typeIt->second.get());
-
-					std::cout << "Success: Node '" << "' [ID: " << nextId << "] created as type '" << pc.name << "'.\n";
-					auto it = current_db->nodes.find(nextId);
-					std::cout << it->second->ToString() << "\n";
 				}
 			}
 			catch (const std::exception& e) {
@@ -119,12 +109,9 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			long int nextId = static_cast<long int>(current_db->edges.size() + 1);
-
-			auto newEdgeType = std::make_unique<EdgeType>(nextId, pc.name, FromIt->second.get(), ToIt->second.get(), pc.pt_req, pc.pt_nreq);
+			auto newEdgeType = std::make_unique<EdgeType>(pc.name, FromIt->second.get(), ToIt->second.get(), pc.pt_req, pc.pt_nreq);
 			current_db->AddEdgeType(std::move(newEdgeType));
 
-			std::cout << "Success: EdgeType '" << pc.name << "' created (" << pc.from_name << " -> " << pc.to_name << ").\n";
 			break;
 		}
 		case ENTITY::EDGE: {
@@ -134,16 +121,23 @@ void Kernel::Exec(std::string input)
 				break;
 			}
 
-			auto FromIt = current_db->nodes.find(pc.from_id);
-			if (FromIt == current_db->nodes.end()) {
-				std::cout << "Error: Source ('" << pc.from_id << "') node not found.\n";
+
+			NodeType* fromType = typeIt->second->from;
+			NodeType* toType = typeIt->second->to;
+
+			auto itOuterFrom = current_db->nodes.find(fromType);
+			auto itOuterTo = current_db->nodes.find(toType);
+
+			if (itOuterFrom == current_db->nodes.end() || itOuterTo == current_db->nodes.end()) {
+				std::cout << "Error: Node types for this edge do not exist in database.\n";
 				break;
 			}
 
-			auto ToIt = current_db->nodes.find(pc.to_id);
+			auto fromIt = itOuterFrom->second.find(pc.from_id);
+			auto toIt = itOuterTo->second.find(pc.to_id);
 
-			if (ToIt == current_db->nodes.end()) {
-				std::cout << "Error: Target ('" << pc.to_id << "') node not found.\n";
+			if (fromIt == itOuterFrom->second.end() || toIt == itOuterTo->second.end()) {
+				std::cout << "Error: Source (" << pc.from_id << ") or Target (" << pc.to_id << ") node not found.\n";
 				break;
 			}
 
@@ -153,10 +147,9 @@ void Kernel::Exec(std::string input)
 				std::vector<PropertyBase*> nreq;
 
 				if (typeIt->second.get()->Validate(pc.rp_req, pc.rp_nreq, req, nreq)) {
-					auto newEdge = std::make_unique<Edge>(nextId, typeIt->second.get(), FromIt->second.get(), ToIt->second.get(), req, nreq);
+					auto newEdge = std::make_unique<Edge>(nextId, typeIt->second.get(), fromIt->second.get(), toIt->second.get(), req, nreq);
 
-					current_db->AddEdge(std::move(newEdge));
-					std::cout << "Success: Edge of type '" << pc.name << "' created with ID: " << nextId << ".\n";
+					current_db->AddEdge(std::move(newEdge), typeIt->second.get());
 				}
 			}
 			catch (const std::exception& e) {
