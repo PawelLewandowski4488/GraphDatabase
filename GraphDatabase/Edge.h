@@ -14,10 +14,10 @@ class Node;
 
 class Edge : public Object
 {
+public:
 	EdgeType* edgetype;
 	Node* from;
 	Node* to;
-public:
 	Edge(long int id, EdgeType* edgetype, Node* from, Node* to, std::vector<PropertyBase*> req, std::vector<PropertyBase*> nreq) : Object(id, std::move(req), std::move(nreq)), edgetype(std::move(edgetype)), from(std::move(from)), to(std::move(to)) {}
 	~Edge();
 	Edge(const Edge&) = delete;

@@ -12,10 +12,10 @@ class Edge;
 
 class Node : public Object
 {
+public:
 	//NodeType* nodetype; Testing
 	std::vector<Edge*> out_edges;
 	std::vector<Edge*> in_edges;
-public:
 	Node(long int id, std::vector<PropertyBase*> req, std::vector<PropertyBase*> nreq) : Object(id, std::move(req), std::move(nreq)) {}
 	~Node();
 	Node(const Node&) = delete;

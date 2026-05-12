@@ -31,6 +31,7 @@ void DataBase::AddNode(std::unique_ptr <Node> node, NodeType* nodetype, long int
         finalId = ++(nodetype->LastId);
     }
 
+    nodetype->nodes.push_back(node.get());
     node->SetId(finalId);
     std::cout << node->ToString();
     nodes[nodetype].emplace(finalId, std::move(node));
@@ -41,27 +42,38 @@ void DataBase::AddEdgeType(std::unique_ptr <EdgeType> edgetype)
     std::cout << edgetype->ToString();
 	edgetypes.emplace(edgetype->name, std::move(edgetype));
 }
-void DataBase::AddEdge(std::unique_ptr <Edge> edge, EdgeType* edgetype, long int forcedid)
+void DataBase::AddEdge(std::unique_ptr <Edge> edge, EdgeType* edgetype, long int fromid, long int toid)
 {
-    long int finalId;
-
-    if (forcedid != -1) {
-        if (edges[edgetype].count(forcedid) > 0) {
-            throw std::runtime_error("ID " + std::to_string(forcedid) + " occupied for this edgetype");
-        }
-        finalId = forcedid;
-        if (finalId > edgetype->LastId) edgetype->LastId = finalId;
-    }
-    else {
-        finalId = ++(edgetype->LastId);
-    }
-
-    edge->SetId(finalId);
+    edgetype->edges.push_back(edge.get());
+    edge->SetId(DataBase::Cantor(fromid, toid));
     std::cout << edge->ToString();
-    edges[edgetype].emplace(finalId, std::move(edge));
+    edges[edgetype].emplace(std::pair{fromid, toid}, std::move(edge));
 }
+
+void DataBase::RemoveNodeType(std::string name)
+{
+    nodetypes.erase(name);
+}
+void DataBase::RemoveNode(NodeType* nodetype, long int id)
+{
+    nodes[nodetype].erase(id);
+}
+void DataBase::RemoveEdgeType(std::string name)
+{
+    edgetypes.erase(name);
+}
+void DataBase::RemoveEdge(EdgeType* edgetype, long int fromid, long int toid)
+{
+    edges[edgetype].erase(std::pair{fromid, toid});
+}
+
 
 std::string DataBase::GetName()
 {
 	return this->name;
+}
+
+long int DataBase::Cantor(long int n, long int m)
+{
+    return (n + m)* (n + m + 1) / 2 + m;
 }

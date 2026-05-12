@@ -148,8 +148,9 @@ void Kernel::Exec(std::string input)
 
 				if (typeIt->second.get()->Validate(pc.rp_req, pc.rp_nreq, req, nreq)) {
 					auto newEdge = std::make_unique<Edge>(nextId, typeIt->second.get(), fromIt->second.get(), toIt->second.get(), req, nreq);
-
-					current_db->AddEdge(std::move(newEdge), typeIt->second.get());
+					fromIt->second.get()->out_edges.push_back(newEdge.get());
+					toIt->second.get()->in_edges.push_back(newEdge.get());
+					current_db->AddEdge(std::move(newEdge), typeIt->second.get(), pc.from_id, pc.to_id);
 				}
 			}
 			catch (const std::exception& e) {
@@ -166,15 +167,70 @@ void Kernel::Exec(std::string input)
 		switch (pc.entity)
 		{
 		case ENTITY::NODETYPE: {
+			if (current_db->nodetypes.find(pc.name) == current_db->nodetypes.end()) {
+				std::cout << "Error: NodeType '" << pc.name << "' doesnt exist.\n";
+				return;
+			}
+
+			if (!current_db->nodetypes.at(pc.name)->nodes.empty())
+			{
+				std::cout << "Error: NodeType '" << pc.name << "' is not removable.\n";
+				return;
+			}
+
+			current_db->RemoveNodeType(pc.name);
+			std::cout << "NodeType '" << pc.name << "' has been deleted.\n";
 			break;
 		}
 		case ENTITY::NODE: {
+			auto typeIt = current_db->nodetypes.find(pc.name);
+			if (typeIt == current_db->nodetypes.end()) {
+				std::cout << "Error: NodeType '" << pc.name << "' not found.\n";
+				return;
+			}
+			NodeType* nodetype = typeIt->second.get();
+			Node* node = current_db->nodes.at(nodetype).at(pc.id).get();
+			if (!node->out_edges.empty() || !node->in_edges.empty())
+			{
+				std::cout << "Error: Node '" << pc.name << "' ID: " << std::to_string(pc.id) << " is not removable.\n";
+				return;
+			}
+
+			std::erase(nodetype->nodes, node);
+			current_db->RemoveNode(nodetype, pc.id);
+			std::cout << "Node '" << pc.name << "'ID: "  << std::to_string(pc.id)<< " has been deleted.\n";
 			break;
 		}
 		case ENTITY::EDGETYPE: {
+			if (current_db->edgetypes.find(pc.name) == current_db->edgetypes.end()) {
+				std::cout << "Error: EdgeType '" << pc.name << "' doesnt exist.\n";
+				return;
+			}
+
+			if (!current_db->edgetypes.at(pc.name)->edges.empty())
+			{
+				std::cout << "Error: EdgeType '" << pc.name << "' is not removable.\n";
+				return;
+			}
+
+			current_db->RemoveEdgeType(pc.name);
+			std::cout << "EdgeType '" << pc.name << "' has been deleted.\n";
+			break;
 			break;
 		}
 		case ENTITY::EDGE: {
+			auto typeIt = current_db->edgetypes.find(pc.name);
+			if (typeIt == current_db->edgetypes.end()) {
+				std::cout << "Error: EdgeType '" << pc.name << "' not found.\n"; // walidacja
+				return;
+			}
+
+			EdgeType* edgetype = typeIt->second.get();
+			Edge* edge = current_db->edges.at(edgetype).at(std::pair{ pc.from_id, pc.to_id }).get();
+			std::erase(edge->from->out_edges, edge);
+			std::erase(edge->to->in_edges, edge);
+			current_db->RemoveEdge(edgetype, pc.from_id, pc.to_id);
+			std::cout << "Edge '" << pc.name << "' (" << pc.from_id << ", " << pc.to_id << ") has been deleted.\n";
 			break;
 		}
 		}

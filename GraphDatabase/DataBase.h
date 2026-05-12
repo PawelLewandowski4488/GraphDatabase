@@ -16,7 +16,7 @@ public:
 	std::map<std::string, std::unique_ptr<NodeType>> nodetypes;
 	std::map<NodeType*, std::map<long int, std::unique_ptr<Node>>> nodes; //todo
 	std::map<std::string, std::unique_ptr<EdgeType>> edgetypes;
-	std::map<EdgeType*, std::map<long int, std::unique_ptr<Edge>>> edges; //todo
+	std::map<EdgeType*, std::map<std::pair<long int, long int>, std::unique_ptr<Edge>>> edges; //todo
 
 	DataBase(std::string name) : name(name) {}
 	~DataBase();
@@ -30,12 +30,12 @@ public:
 	void AddNodeType(std::unique_ptr<NodeType> nodetype);
 	void AddNode(std::unique_ptr<Node> node, NodeType* nodetype, long int forcedid = -1);
 	void AddEdgeType(std::unique_ptr<EdgeType> edgetype);
-	void AddEdge(std::unique_ptr<Edge> edge, EdgeType* edgetype, long int forcedid = -1);
+	void AddEdge(std::unique_ptr<Edge> edge, EdgeType* edgetype, long int fromid, long int toid);
 
 	void RemoveNodeType(std::string name);
-	void RemoveNode(std::string name);
+	void RemoveNode(NodeType* nodetype, long int id);
 	void RemoveEdgeType(std::string name);
-	void RemoveEdge(std::string name);
+	void RemoveEdge(EdgeType* edgetype, long int fromid, long int toid);
 
 	std::unique_ptr<NodeType> FindNodeType(std::string label);
 	std::unique_ptr<Node> FindNode(std::string label);
@@ -45,5 +45,6 @@ public:
 	void Load(); // to do
 	void Save(); // to do
 	std::string GetName();
+	static long int Cantor(long int n, long int m);
 };
 
