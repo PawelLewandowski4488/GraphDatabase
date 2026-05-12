@@ -26,7 +26,9 @@ void Kernel::Exec(std::string input)
 		if (pc.action == ACTION::CREATE) {
 			if (dbs.find(pc.name) == dbs.end()) {
 				dbs.emplace(pc.name, DataBase(pc.name));
-				std::cout << "Database created: " << pc.name << "\n";
+				auto it = dbs.find(pc.name);
+				Kernel::current_db = &(it->second);
+				return;
 			}
 			else {
 				std::cout << "Database already exists: " << pc.name << "\n";
@@ -38,7 +40,6 @@ void Kernel::Exec(std::string input)
 
 			if (it != dbs.end()) {
 				Kernel::current_db = &(it->second);
-				std::cout << "Using DataBase: " << pc.name << "\n";
 				return;
 			}
 			else {
@@ -185,7 +186,7 @@ void Kernel::Exec(std::string input)
 		case ENTITY::NODE: {
 			auto typeIt = current_db->nodetypes.find(pc.name);
 			if (typeIt == current_db->nodetypes.end()) {
-				std::cout << "Error: NodeType '" << pc.name << "' not found.\n";
+				std::cout << "Error: Node '" << pc.name << "' ID: " << std::to_string(pc.id) << " not found.\n";
 				return;
 			}
 			NodeType* nodetype = typeIt->second.get();
@@ -226,6 +227,12 @@ void Kernel::Exec(std::string input)
 			}
 
 			EdgeType* edgetype = typeIt->second.get();
+			
+			auto It = current_db->edges[edgetype].find(std::pair{ pc.from_id, pc.to_id });
+			if (It == current_db->edges[edgetype].end()) {
+				std::cout << "Error: Edge '" << pc.name << "' (" << pc.from_id << ", " << pc.to_id << ") not found.\n";
+				return;
+			}
 			Edge* edge = current_db->edges.at(edgetype).at(std::pair{ pc.from_id, pc.to_id }).get();
 			std::erase(edge->from->out_edges, edge);
 			std::erase(edge->to->in_edges, edge);
@@ -249,6 +256,65 @@ void Kernel::Exec(std::string input)
 			break;
 		}
 		case ENTITY::EDGE: {
+			break;
+		}
+		}
+		break;
+	}
+	case ACTION::PRINT: {
+		switch (pc.entity)
+		{
+		case ENTITY::NODETYPE: {
+			if (current_db->nodetypes.find(pc.name) == current_db->nodetypes.end()) {
+				std::cout << "Error: NodeType '" << pc.name << "' doesnt exist.\n";
+				return;
+			}
+
+			std::cout << current_db->nodetypes.at(pc.name)->ToString();
+			break;
+		}
+		case ENTITY::NODE: {
+			auto typeIt = current_db->nodetypes.find(pc.name);
+			if (typeIt == current_db->nodetypes.end()) {
+				std::cout << "Error: NodeType '" << pc.name << "' doesnt exist.\n";
+				return;
+			}
+			NodeType* nodetype = typeIt->second.get();
+
+			auto It = current_db->nodes[nodetype].find(pc.id);
+			if (It == current_db->nodes[nodetype].end()) {
+				std::cout << "Error: Node '" << pc.name << "' ID: " << std::to_string(pc.id) << " not found.\n";
+				return;
+			}
+
+			std::cout << current_db->nodes.at(nodetype).at(pc.id)->ToString();
+			break;
+		}
+		case ENTITY::EDGETYPE: {
+			if (current_db->edgetypes.find(pc.name) == current_db->edgetypes.end()) {
+				std::cout << "Error: EdgeType '" << pc.name << "' doesnt exist.\n";
+				return;
+			}
+
+			std::cout << current_db->edgetypes.at(pc.name)->ToString();
+			break;
+		}
+		case ENTITY::EDGE: {
+			auto typeIt = current_db->edgetypes.find(pc.name);
+			if (typeIt == current_db->edgetypes.end()) {
+				std::cout << "Error: EdgeType '" << pc.name << "' not found.\n"; 
+				return;
+			}
+
+			EdgeType* edgetype = typeIt->second.get();
+
+			auto It = current_db->edges[edgetype].find(std::pair{ pc.from_id, pc.to_id });
+			if (It == current_db->edges[edgetype].end()) {
+				std::cout << "Error: Edge '" << pc.name << "' (" << pc.from_id << ", " << pc.to_id << ") not found.\n";
+				return;
+			}
+
+			std::cout << current_db->edges.at(edgetype).at(std::pair{ pc.from_id, pc.to_id })->ToString();
 			break;
 		}
 		}

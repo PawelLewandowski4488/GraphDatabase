@@ -2,28 +2,32 @@
 
 bool ObjectType::Validate(std::vector<RawProperty> req, std::vector<RawProperty> nreq, std::vector<PropertyBase*>& reqOut, std::vector<PropertyBase*>& nreqOut)
 {
-    auto checkMatch = [](const std::vector<RawProperty>& inputVector,
-        const std::vector<PropertyType>& schemaVector,
-        std::vector<PropertyBase*>& outList)
-        {
-            for (const auto& raw : inputVector) {
-                int match_count = 0;
-
-                for (const auto& schema : schemaVector) {
-                    if (schema.Validate(raw)) {
-                        match_count++;
-                        outList.push_back(PropertyBase::CreateProperty(schema, raw.value));
-                    }
-                }
-
-                if (match_count != 1) {
-                    return false;
-                }
+    for (const auto& schema : this->req) {
+        bool found = false;
+        for (const auto& raw : req) {
+            if (schema.Validate(raw)) {
+                reqOut.push_back(PropertyBase::CreateProperty(schema, raw.value));
+                found = true;
+                break;
             }
-            return true;
-        };
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    for (const auto& raw : nreq) {
+        bool matched = false;
+        for (const auto& schema : this->nreq) {
+            if (schema.Validate(raw)) {
+                nreqOut.push_back(PropertyBase::CreateProperty(schema, raw.value));
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) return false;
+    }
 
-    return checkMatch(req, this->req, reqOut) && checkMatch(nreq, this->nreq, nreqOut);
+    return true;
 }
 
 void ObjectType::SetId(long int id)

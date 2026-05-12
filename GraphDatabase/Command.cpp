@@ -289,6 +289,25 @@ ParsedCommand Command::Parse(const std::string& input) {
                 break;
             }
             break;
+        case ACTION::PRINT:
+            switch (pc.entity) {
+            case ENTITY::DATABASE:
+                break;
+            case ENTITY::NODETYPE:
+                break;
+            case ENTITY::NODE:
+                pc.id = Command::ConvertToId(Command::ExtractContent(remainder, '(', ')'));
+                break;
+            case ENTITY::EDGETYPE:
+                break;
+            case ENTITY::EDGE: {
+                auto i = Command::ConvertToIdPair(Command::ExtractContent(remainder, '(', ')'));
+                pc.from_id = i.first;
+                pc.to_id = i.second;
+            }
+                             break;
+            }
+            break;
         }
     }
     catch (const std::exception& e) {

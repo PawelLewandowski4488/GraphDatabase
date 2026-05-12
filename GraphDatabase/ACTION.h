@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class ACTION { CREATE, DELETE, CHANGE, USE, UNKNOWN };
+enum class ACTION { CREATE, DELETE, CHANGE, USE, PRINT, UNKNOWN };
 
 class ActionMapper
 {

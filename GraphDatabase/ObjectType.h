@@ -10,7 +10,7 @@
 class ObjectType
 {
 public:
-	long int id;
+	long int id = 0;
 	std::string name;
 	std::vector<PropertyType> req;
 	std::vector<PropertyType> nreq;
