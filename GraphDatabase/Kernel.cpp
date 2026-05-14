@@ -173,7 +173,7 @@ void Kernel::Exec(std::string input)
 				return;
 			}
 
-			if (!current_db->nodetypes.at(pc.name)->nodes.empty())
+			if (!current_db->nodetypes.at(pc.name)->IsRemovable())
 			{
 				std::cout << "Error: NodeType '" << pc.name << "' is not removable.\n";
 				return;

@@ -22,5 +22,6 @@ public:
 
 	void AddEdge(Edge* edge);
 	std::string ToString() const override;
+	bool IsRemovable() const override;
 };
 

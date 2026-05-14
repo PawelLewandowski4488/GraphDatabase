@@ -14,9 +14,9 @@ class DataBase
 public:
 	std::string name;
 	std::map<std::string, std::unique_ptr<NodeType>> nodetypes;
-	std::map<NodeType*, std::map<long int, std::unique_ptr<Node>>> nodes; //todo
+	std::map<NodeType*, std::map<long int, std::unique_ptr<Node>>> nodes;
 	std::map<std::string, std::unique_ptr<EdgeType>> edgetypes;
-	std::map<EdgeType*, std::map<std::pair<long int, long int>, std::unique_ptr<Edge>>> edges; //todo
+	std::map<EdgeType*, std::map<std::pair<long int, long int>, std::unique_ptr<Edge>>> edges;
 
 	DataBase(std::string name) : name(name) {}
 	~DataBase();
@@ -24,8 +24,8 @@ public:
 	DataBase(const DataBase&) = delete;
 	DataBase& operator=(const DataBase&) = delete;
 
-	DataBase(DataBase&&) noexcept = default;
-	DataBase& operator=(DataBase&&) noexcept = default;
+	DataBase(DataBase&&) = default;
+	DataBase& operator=(DataBase&&) = default;
 
 	void AddNodeType(std::unique_ptr<NodeType> nodetype);
 	void AddNode(std::unique_ptr<Node> node, NodeType* nodetype, long int forcedid = -1);

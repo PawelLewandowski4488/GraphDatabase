@@ -24,5 +24,6 @@ public:
 	void SetId(long int id);
 
 	virtual std::string ToString() const;
+	virtual bool IsRemovable() const = 0;
 };
 

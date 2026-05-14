@@ -8,7 +8,12 @@ void NodeType::AddNode(Node* node)
 
 std::string NodeType::ToString() const
 {
-	std::string text = "--NODE TYPE--\n";
-    text += ObjectType::ToString();
+	std::string text = "\n--NODE TYPE--\n";
+    text += ObjectType::ToString() + "\n";
 	return text;
+}
+
+bool NodeType::IsRemovable() const
+{
+	return (nodes.empty() && edgetypes.empty());
 }

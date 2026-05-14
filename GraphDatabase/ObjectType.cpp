@@ -37,8 +37,9 @@ void ObjectType::SetId(long int id)
 
 std::string ObjectType::ToString() const
 {
-    std::string text = name + "\n";
+    std::string text = name + "\n\n";
     for (PropertyType p : req) text += p.ToString() + "\n";
+    text += "\n";
     for (PropertyType p : nreq) text += p.ToString() + "\n";
     return text;
 }

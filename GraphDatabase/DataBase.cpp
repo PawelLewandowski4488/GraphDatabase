@@ -39,6 +39,8 @@ void DataBase::AddNode(std::unique_ptr <Node> node, NodeType* nodetype, long int
 
 void DataBase::AddEdgeType(std::unique_ptr <EdgeType> edgetype)
 {
+    edgetype->from->edgetypes.push_back(edgetype.get());
+    edgetype->to->edgetypes.push_back(edgetype.get());
     std::cout << edgetype->ToString();
 	edgetypes.emplace(edgetype->name, std::move(edgetype));
 }
@@ -60,6 +62,8 @@ void DataBase::RemoveNode(NodeType* nodetype, long int id)
 }
 void DataBase::RemoveEdgeType(std::string name)
 {
+    std::erase(edgetypes.at(name)->from->edgetypes, edgetypes.at(name).get());
+    std::erase(edgetypes.at(name)->to->edgetypes, edgetypes.at(name).get());
     edgetypes.erase(name);
 }
 void DataBase::RemoveEdge(EdgeType* edgetype, long int fromid, long int toid)
